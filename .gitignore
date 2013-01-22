@@ -1,0 +1,18 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Eclipse #
+*.classpath
+*.project
+.settings
+
+# System #
+.directory
+*~
+
+# Unknown #
+*.orig
