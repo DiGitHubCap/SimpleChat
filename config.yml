@@ -1,0 +1,94 @@
+# A simple chat plugin with channels.
+# Copyright (C) 2013 Andrew Stevanus (Hoot215) <hoot893@gmail.com>
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+# 
+# 
+# Variables (where applicable):
+# $name - Player's name
+# $displayname - Player's display name
+# $prefix - Player's prefix
+# $suffix - Player's suffix
+# $world - Player's world
+# $wname - Player's world's alias
+# $message - The message to be sent
+# 
+# worlds: A list of worlds
+#   [world]:
+#     alias: World's name for use with $worldname
+# groups: A list of groups (defined below)
+#           Make sure to list these in order of lowest to highest priority
+#           The permissions node for groups is simplechat.group.[group]
+# group:
+#   [group]:
+#     join: The join message for this group
+#     quit: The quit message for this group
+#     default-channels: A list of default channels (separated by commas) for players in this
+#                       group to be in when they join the server
+#     default-active-channel: The default active channel for players in this group to be in
+#                             when they join the server
+# channels: A list of channels (defined below)
+# channel:
+#   [channel]:
+#     radius: The range of the message (0 means world and -1 means server)
+#     aliases: A list of command aliases for this channel
+#     format: The format of messages sent in this channel (see Variables)
+#     permission: The permission required for players to join this channel
+
+worlds:
+  world:
+    alias: 'Overworld'
+  world_nether:
+    alias: 'Nether'
+  world_the_end:
+    alias: 'The End'
+groups:
+  - mod
+  - admin
+group:
+  default:
+    join: '&7$name &8has joined the game'
+    quit: '&7$name &8has left the game'
+    default-channels: 'global,world,local'
+    default-active-channel: global
+  admin:
+    join: '$prefix&e$name$suffix &6&lhas joined the game'
+    quit: '$prefix&e$name$suffix &6&lhas left the game'
+    default-channels: 'global,world,local,admin'
+  mod:
+    join: '$prefix&e$name$suffix &6has joined the game'
+    quit: '$prefix&e$name$suffix &6has left the game'
+channels:
+  - global
+  - world
+  - local
+  - admin
+channel:
+  global:
+    radius: -1
+    aliases: [global, g]
+    format: '&2[G] $prefix&7$displayname$suffix&8: &f$message'
+    log-to-file: true
+    log-to-console: true
+  world:
+    radius: 0
+    aliases: [w]
+    format: '&5[$wname] $prefix&7$displayname$suffix&8: &f$message'
+    log-to-file: true
+    log-to-console: true
+  local:
+    radius: 256
+    aliases: [local, l]
+    format: '&1[L] $prefix&7$displayname$suffix&8: &f$message'
+    log-to-file: true
+    log-to-console: true
+  admin:
+    radius: -1
+    aliases: [admin, a]
+    format: '&6&l[A] $prefix&7$displayname$suffix&8: &f$message'
+    log-to-file: true
+    log-to-console: true
+    permission: 'simplechat.channel.admin'

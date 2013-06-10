@@ -1,0 +1,92 @@
+# A simple chat plugin with channels.
+# Copyright (C) 2013 Andrew Stevanus (Hoot215) <hoot893@gmail.com>
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+name: SimpleChat
+main: me.hoot215.simplechat.SimpleChat
+version: 1.0
+author: Hoot215
+softdepend: [Vault]
+permissions:
+  simplechat.*:
+    description: 'Gives access to everything in SimpleChat'
+    default: op
+    children:
+      simplechat.standard: true
+      simplechat.colours: true
+      simplechat.reload: true
+      simplechat.refresh: true
+      simplechat.mute: true
+  simplechat.standard:
+    description: 'Gives access to standard features in SimpleChat'
+    default: true
+    children:
+      simplechat.simplechat: true
+      simplechat.channel: true
+      simplechat.talk: true
+  simplechat.simplechat:
+    description: "Gives access to the command '/simplechat'"
+  simplechat.colours:
+    description: 'Allows the use of colours in chat'
+  simplechat.channel:
+    description: "Gives access to the command '/channel'"
+    children:
+      simplechat.channel.list: true
+  simplechat.channel.list:
+    description: "Gives access to the command '/channel list'"
+  simplechat.mute:
+    description: "Gives access to the commands '/mute' and '/unmute'"
+  simplechat.talk:
+    description: 'Allows the player to talk'
+  simplechat.reload:
+    description: "Gives access to the command '/simplechat reload'"
+  simplechat.recache:
+    description: "Gives access to the command '/simplechat recache'"
+commands:
+  simplechat:
+    description: 'Displays SimpleChat info'
+    permission: simplechat.simplechat
+    permission-message: "§cYou don't have permission to use this command!"
+    usage: |
+      §2==== §6SimpleChat by Hoot215 §2====
+      §a======== SimpleChat Help ========
+      §9/<command> help §f- Displays SimpleChat help
+      §9/<command> reload §f- Reloads config
+      §9/<command> recache §f- Refreshes cache
+    aliases: [chat, schat, sc]
+  channel:
+    description: 'Displays channel help'
+    permission: simplechat.channel
+    permission-message: "§cYou don't have permission to use this command!"
+    usage: |
+      §2==== §6SimpleChat by Hoot215 §2====
+      §a======== §bChannel Help §a========
+      §9/<command> help §f- Displays channel help
+      §9/<command> <name> §f- Set active channel to channel <name>
+      §9/<command> join <name> §f- Join channel <name>
+      §9/<command> leave <name> §f- Leave channel <name>
+      §9/<command> <name> <message> §f- Send <message> to channel <name>
+      §9/<command> list §f- Lists all channels (highlighting the ones you are in)
+    aliases: [channels, ch]
+  mute:
+    description: 'Prevents a player from talking'
+    permission: simplechat.mute
+    permission-message: "§cYou don't have permission to use this command!"
+    usage: |
+      §2==== §6SimpleChat by Hoot215 §2====
+      §a========= §cMute Help §a=========
+      §9/<command> <player> §f- Mutes <player>
+      §9/unmute <player> §f- Unmutes <player>
+  unmute:
+    description: 'Allows a player to talk again'
+    permission: simplechat.mute
+    permission-message: "§cYou don't have permission to use this command!"
+    usage: |
+      §2==== §6SimpleChat by Hoot215 §2====
+      §a========= §cMute Help §a=========
+      §9/mute <player> §f- Mutes <player>
+      §9/<command> <player> §f- Unmutes <player>
