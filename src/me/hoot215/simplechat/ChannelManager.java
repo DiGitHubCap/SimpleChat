@@ -42,15 +42,17 @@ public class ChannelManager
               }
             List<String> aliases =
                 plugin.getConfig().getStringList("channel." + s + ".aliases");
+            int radius =
+                plugin.getConfig().getInt("channel." + s + ".radius", -1);
+            String format =
+                plugin.getConfig().getString("channel." + s + ".format",
+                    "<$name> $message");
+            boolean hidden =
+                plugin.getConfig()
+                    .getBoolean("channel." + s + ".hidden", false);
             Channel channel =
-                new SimpleChannel(s, plugin.getConfig().isInt(
-                    "channel." + s + ".radius") ? plugin.getConfig().getInt(
-                    "channel." + s + ".radius") : -1, SimpleChat.getInstance()
-                    .getConfig().isString("channel." + s + ".format")
-                    ? SimpleChat.getInstance().getConfig()
-                        .getString("channel." + s + ".format")
-                    : "<$name>: $message", aliases.toArray(new String[aliases
-                    .size()]));
+                new SimpleChannel(s, radius, format,
+                    aliases.toArray(new String[aliases.size()]), hidden);
             channels.put(s, channel);
             for (String a : aliases)
               {

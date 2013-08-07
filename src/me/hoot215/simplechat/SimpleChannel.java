@@ -39,6 +39,7 @@ public class SimpleChannel implements Channel
     private final int radius;
     private final String format;
     private final String[] aliases;
+    private final boolean hidden;
     private final boolean logToFile;
     private final boolean logToConsole;
     private final String permission;
@@ -47,20 +48,20 @@ public class SimpleChannel implements Channel
         .synchronizedSet(new HashSet<Chatter>());
     
     public SimpleChannel(String name, int radius, String format,
-      String[] aliases)
+      String[] aliases, boolean hidden)
       {
         this.name = name;
         this.radius = radius;
-        this.aliases = (aliases == null ? new String[0] : aliases);
         this.format = format;
+        this.aliases = (aliases == null ? new String[0] : aliases);
+        this.hidden = hidden;
         String configPrefix = "channel." + name + '.';
         logToFile = plugin.getConfig().getBoolean(configPrefix + "log-to-file");
         logToConsole =
             plugin.getConfig().getBoolean(configPrefix + "log-to-console");
         permission =
-            plugin.getConfig().isString(configPrefix + "permission") ? plugin
-                .getConfig().getString(configPrefix + "permission")
-                : "simplechat.channel";
+            plugin.getConfig().getString(configPrefix + "permission",
+                "simplechat.channel");
         if (logToFile)
           {
             logger = Logger.getLogger("SimpleChat:" + name);
@@ -122,6 +123,11 @@ public class SimpleChannel implements Channel
         return new HashSet<Chatter>(members);
       }
     
+    public boolean isHidden ()
+      {
+        return hidden;
+      }
+    
     public boolean isMember (Chatter chatter)
       {
         return members.contains(chatter);
@@ -181,7 +187,10 @@ public class SimpleChannel implements Channel
             case -1 :
               for (Chatter c : members)
                 {
-                  c.sendMessage(message);
+                  if ( !c.isIgnoring(chatter))
+                    {
+                      c.sendMessage(message);
+                    }
                 }
               break;
             case 0 :
@@ -190,7 +199,10 @@ public class SimpleChannel implements Channel
                 {
                   if (c.getWorld() == w1)
                     {
-                      c.sendMessage(message);
+                      if ( !c.isIgnoring(chatter))
+                        {
+                          c.sendMessage(message);
+                        }
                     }
                 }
               break;
@@ -199,7 +211,8 @@ public class SimpleChannel implements Channel
               Location origin = chatter.getLocation();
               for (Chatter c : members)
                 {
-                  if (c.getWorld() == w2
+                  if ( !c.isIgnoring(chatter)
+                      && c.getWorld() == w2
                       && (c.getLocation() == origin || c.getLocation()
                           .distance(origin) < radius))
                     {

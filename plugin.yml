@@ -18,6 +18,8 @@ permissions:
     children:
       simplechat.standard: true
       simplechat.colours: true
+      simplechat.channel.list.hidden: true
+      simplechat.unignorable: true
       simplechat.reload: true
       simplechat.refresh: true
       simplechat.mute: true
@@ -27,6 +29,7 @@ permissions:
     children:
       simplechat.simplechat: true
       simplechat.channel: true
+      simplechat.ignore: true
       simplechat.talk: true
   simplechat.simplechat:
     description: "Gives access to the command '/simplechat'"
@@ -38,6 +41,12 @@ permissions:
       simplechat.channel.list: true
   simplechat.channel.list:
     description: "Gives access to the command '/channel list'"
+  simplechat.channel.list.hidden:
+    description: "Show hidden channels when using '/channel list'"
+  simplechat.ignore:
+    description: "Gives access to the commands '/ignore' and '/unignore'"
+  simplechat.unignorable:
+    description: 'Prevents players with this permission being ignored'
   simplechat.mute:
     description: "Gives access to the commands '/mute' and '/unmute'"
   simplechat.talk:
@@ -50,43 +59,61 @@ commands:
   simplechat:
     description: 'Displays SimpleChat info'
     permission: simplechat.simplechat
-    permission-message: "§cYou don't have permission to use this command!"
+    permission-message: "§cYou don't have permission to use this command"
     usage: |
-      §2==== §6SimpleChat by Hoot215 §2====
+      §2==== §6§lSimpleChat §6by §lHoot215 §2====
       §a======== SimpleChat Help ========
-      §9/<command> help §f- Displays SimpleChat help
-      §9/<command> reload §f- Reloads config
-      §9/<command> recache §f- Refreshes cache
+      §9/<command> help §8- §fDisplays SimpleChat help
+      §9/<command> reload §8- §fReloads config
+      §9/<command> recache §8- §fRefreshes cache
     aliases: [chat, schat, sc]
   channel:
     description: 'Displays channel help'
     permission: simplechat.channel
-    permission-message: "§cYou don't have permission to use this command!"
+    permission-message: "§cYou don't have permission to use this command"
     usage: |
-      §2==== §6SimpleChat by Hoot215 §2====
+      §2==== §6§lSimpleChat §6by §lHoot215 §2====
       §a======== §bChannel Help §a========
-      §9/<command> help §f- Displays channel help
-      §9/<command> <name> §f- Set active channel to channel <name>
-      §9/<command> join <name> §f- Join channel <name>
-      §9/<command> leave <name> §f- Leave channel <name>
-      §9/<command> <name> <message> §f- Send <message> to channel <name>
-      §9/<command> list §f- Lists all channels (highlighting the ones you are in)
+      §9/<command> help §8- §fDisplays channel help
+      §9/<command> <name> §8- §fSet active channel to channel <name>
+      §9/<command> join <name> §8- §fJoin channel <name>
+      §9/<command> leave <name> §8- §fLeave channel <name>
+      §9/<command> <name> <message> §8- §fSend <message> to channel <name>
+      §9/<command> list §8- §fLists all channels (highlighting the ones you are in)
     aliases: [channels, ch]
+  ignore:
+    description: 'Ignores chat messages from a player'
+    permission: simplechat.ignore
+    permission-message: "§cYou don't have permission to use this command"
+    usage: |
+      §2==== §6§lSimpleChat §6by §lHoot215 §2====
+      §a========= §cIgnore Help §a=========
+      §9/<command> <players> §8- §fIgnores <players>
+      §9/unignore <players> §8- §fUnignores <players>
+  unignore:
+    description: 'Stops ignoring chat messages from a player'
+    permission: simplechat.ignore
+    permission-message: "§cYou don't have permission to use this command"
+    usage: |
+      §2==== §6§lSimpleChat §6by §lHoot215 §2====
+      §a========= §cIgnore Help §a=========
+      §9/ignore <players> §8- §fIgnores <players>
+      §9/<command> <players> §8- §fUnignores <players>
   mute:
     description: 'Prevents a player from talking'
     permission: simplechat.mute
-    permission-message: "§cYou don't have permission to use this command!"
+    permission-message: "§cYou don't have permission to use this command"
     usage: |
-      §2==== §6SimpleChat by Hoot215 §2====
-      §a========= §cMute Help §a=========
-      §9/<command> <player> §f- Mutes <player>
-      §9/unmute <player> §f- Unmutes <player>
+      §2==== §6§lSimpleChat §6by §lHoot215 §2====
+      §a========== §cMute Help §a==========
+      §9/<command> <players> §8- §fMutes <players>
+      §9/unmute <players> §8- §fUnmutes <players>
   unmute:
     description: 'Allows a player to talk again'
     permission: simplechat.mute
-    permission-message: "§cYou don't have permission to use this command!"
+    permission-message: "§cYou don't have permission to use this command"
     usage: |
-      §2==== §6SimpleChat by Hoot215 §2====
-      §a========= §cMute Help §a=========
-      §9/mute <player> §f- Mutes <player>
-      §9/<command> <player> §f- Unmutes <player>
+      §2==== §6§lSimpleChat §6by §lHoot215 §2====
+      §a========== §cMute Help §a==========
+      §9/mute <players> §8- §fMutes <players>
+      §9/<command> <players> §8- §fUnmutes <players>

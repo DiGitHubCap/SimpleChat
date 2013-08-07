@@ -36,6 +36,8 @@
 #     radius: The range of the message (0 means world and -1 means server)
 #     aliases: A list of command aliases for this channel
 #     format: The format of messages sent in this channel (see Variables)
+#     hidden: Whether or not the channel will appear to normal players
+#             in the channel list
 #     permission: The permission required for players to join this channel
 
 worlds:
@@ -71,24 +73,28 @@ channel:
     radius: -1
     aliases: [global, g]
     format: '&2[G] $prefix&7$displayname$suffix&8: &f$message'
+    hidden: false
     log-to-file: true
     log-to-console: true
   world:
     radius: 0
     aliases: [w]
     format: '&5[$wname] $prefix&7$displayname$suffix&8: &f$message'
+    hidden: false
     log-to-file: true
     log-to-console: true
   local:
     radius: 256
     aliases: [local, l]
     format: '&1[L] $prefix&7$displayname$suffix&8: &f$message'
+    hidden: false
     log-to-file: true
     log-to-console: true
   admin:
     radius: -1
     aliases: [admin, a]
     format: '&6&l[A] $prefix&7$displayname$suffix&8: &f$message'
+    hidden: true
     log-to-file: true
     log-to-console: true
     permission: 'simplechat.channel.admin'

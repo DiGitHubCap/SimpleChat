@@ -26,10 +26,10 @@ import java.util.Set;
 
 import org.bukkit.entity.Player;
 
-public class PlayerManager
+public class ChatterManager
   {
     private final SimpleChat plugin = SimpleChat.getInstance();
-    private final Map<Player, Chatter> players = Collections
+    private final Map<Player, Chatter> chatters = Collections
         .synchronizedMap(new HashMap<Player, Chatter>(plugin.getServer()
             .getMaxPlayers()));
     
@@ -42,22 +42,22 @@ public class PlayerManager
       {
         if (player == null)
           return null;
-        if (players.containsKey(player))
+        if (chatters.containsKey(player))
           {
-            return players.get(player);
+            return chatters.get(player);
           }
-        return this.initializePlayer(player);
+        return this.initializeChatter(player);
       }
     
     public Set<Chatter> getChatters ()
       {
-        return new HashSet<Chatter>(players.values());
+        return new HashSet<Chatter>(chatters.values());
       }
     
-    public Chatter initializePlayer (Player player)
+    public Chatter initializeChatter (Player player)
       {
         Chatter chatter = new SimpleChatter(player);
-        players.put(player, chatter);
+        chatters.put(player, chatter);
         for (String channel : ((String) chatter
             .getGroupConfigValue("default-channels")).split(","))
           {
@@ -68,9 +68,9 @@ public class PlayerManager
         return chatter;
       }
     
-    public void destructPlayer (Player player)
+    public void destructChatter (Player player)
       {
-        Chatter chatter = players.get(player);
+        Chatter chatter = chatters.get(player);
         if (chatter != null)
           {
             for (Channel ch : chatter.getChannels())
@@ -78,6 +78,6 @@ public class PlayerManager
                 ch.removeMember(chatter);
               }
           }
-        players.remove(player);
+        chatters.remove(player);
       }
   }

@@ -39,14 +39,14 @@ public class PlayerListener implements Listener
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove (PlayerMoveEvent event)
       {
-        plugin.getPlayerManager().getChatter(event.getPlayer())
+        plugin.getChatterManager().getChatter(event.getPlayer())
             .updateLocation(event.getPlayer().getLocation().clone());
       }
     
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChangedWorld (PlayerChangedWorldEvent event)
       {
-        plugin.getPlayerManager().getChatter(event.getPlayer())
+        plugin.getChatterManager().getChatter(event.getPlayer())
             .updateLocation(event.getPlayer().getLocation());
       }
     
@@ -54,7 +54,7 @@ public class PlayerListener implements Listener
     public void onPlayerJoin (PlayerJoinEvent event)
       {
         Player player = event.getPlayer();
-        Chatter chatter = plugin.getPlayerManager().initializePlayer(player);
+        Chatter chatter = plugin.getChatterManager().initializeChatter(player);
         String message = (String) chatter.getGroupConfigValue("join");
         message =
             message.replace("$name", player.getName())
@@ -62,15 +62,11 @@ public class PlayerListener implements Listener
                 .replace("$world", player.getWorld().getName());
         if (message.contains("$prefix") && plugin.getChat() != null)
           {
-            message =
-                message.replace("$prefix",
-                    plugin.getChat().getPlayerPrefix(player));
+            message = message.replace("$prefix", chatter.getPrefix());
           }
         if (message.contains("$suffix") && plugin.getChat() != null)
           {
-            message =
-                message.replace("$suffix",
-                    plugin.getChat().getPlayerSuffix(player));
+            message = message.replace("$suffix", chatter.getSuffix());
           }
         if (message.contains("$wname"))
           {
@@ -90,7 +86,7 @@ public class PlayerListener implements Listener
     public void onPlayerQuit (PlayerQuitEvent event)
       {
         Player player = event.getPlayer();
-        Chatter chatter = plugin.getPlayerManager().getChatter(player);
+        Chatter chatter = plugin.getChatterManager().getChatter(player);
         String message = (String) chatter.getGroupConfigValue("quit");
         message =
             message.replace("$name", player.getName())
@@ -120,7 +116,7 @@ public class PlayerListener implements Listener
           }
         message = ChatColor.translateAlternateColorCodes('&', message);
         event.setQuitMessage(message);
-        plugin.getPlayerManager().destructPlayer(player);
+        plugin.getChatterManager().destructChatter(player);
       }
     
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -175,7 +171,7 @@ public class PlayerListener implements Listener
       {
         event.setCancelled(true);
         Chatter chatter =
-            plugin.getPlayerManager().getChatter(event.getPlayer());
+            plugin.getChatterManager().getChatter(event.getPlayer());
         if ( !chatter.hasPermission("simplechat.talk"))
           return;
         plugin.handleChat(chatter, chatter.getActiveChannel(),

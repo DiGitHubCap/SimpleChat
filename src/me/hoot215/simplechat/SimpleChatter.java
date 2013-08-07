@@ -34,6 +34,7 @@ public class SimpleChatter implements Chatter
     private final SimpleChat plugin = SimpleChat.getInstance();
     private final Player player;
     private volatile boolean muted = false;
+    private final Set<String> ignoring = new HashSet<String>();
     private final Set<Channel> channels = Collections
         .synchronizedSet(new HashSet<Channel>());
     private Channel activeChannel = null;
@@ -144,6 +145,16 @@ public class SimpleChatter implements Chatter
         return channels.contains(channel);
       }
     
+    public boolean isIgnoring (Chatter chatter)
+      {
+        return this.isIgnoring(chatter.getName());
+      }
+    
+    public boolean isIgnoring (String chatterName)
+      {
+        return ignoring.contains(chatterName);
+      }
+    
     public boolean hasPermission (String perm)
       {
         Boolean result = permissions.get(perm);
@@ -223,6 +234,32 @@ public class SimpleChatter implements Chatter
         return true;
       }
     
+    public void ignore (Chatter chatter)
+      {
+        this.ignore(chatter.getName());
+      }
+    
+    public void ignore (String chatterName)
+      {
+        if ( !ignoring.contains(chatterName))
+          {
+            ignoring.add(chatterName);
+          }
+      }
+    
+    public void unignore (Chatter chatter)
+      {
+        this.unignore(chatter.getName());
+      }
+    
+    public void unignore (String chatterName)
+      {
+        if (ignoring.contains(chatterName))
+          {
+            ignoring.remove(chatterName);
+          }
+      }
+    
     public void sendMessage (String message)
       {
         player.sendMessage(message);
@@ -244,6 +281,8 @@ public class SimpleChatter implements Chatter
             group = "default";
             for (String s : plugin.getConfig().getStringList("groups"))
               {
+                if (s == null)
+                  break;
                 if (player.hasPermission("simplechat.group." + s))
                   {
                     group = s;
@@ -252,6 +291,7 @@ public class SimpleChatter implements Chatter
           }
         
         // Update config cache
+        config.clear();
         config.putAll(plugin.getConfig()
             .getConfigurationSection("group.default").getValues(true));
         config.putAll(plugin.getConfig()
@@ -283,6 +323,7 @@ public class SimpleChatter implements Chatter
           }
         
         // Update permissions cache
+        permissions.clear();
         for (Permission perm : plugin.getDescription().getPermissions())
           {
             permissions.put(perm.getName(), player.hasPermission(perm));

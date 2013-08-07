@@ -52,6 +52,10 @@ public interface Chatter
     
     public boolean isInChannel (Channel channel);
     
+    public boolean isIgnoring (Chatter chatter);
+    
+    public boolean isIgnoring (String chatterName);
+    
     public boolean hasPermission (String perm);
     
     public void setMuted (boolean value);
@@ -67,6 +71,14 @@ public interface Chatter
     public boolean leaveChannel (String channelName);
     
     public boolean leaveChannel (Channel channel);
+    
+    public void ignore (Chatter chatter);
+    
+    public void ignore (String chatterName);
+    
+    public void unignore (Chatter chatter);
+    
+    public void unignore (String chatterName);
     
     public void sendMessage (String message);
     

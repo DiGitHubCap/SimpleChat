@@ -37,6 +37,8 @@ public interface Channel
     
     public Set<Chatter> getMembers ();
     
+    public boolean isHidden ();
+    
     public boolean isMember (Chatter chatter);
     
     public void addMember (Chatter chatter);

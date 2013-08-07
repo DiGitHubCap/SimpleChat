@@ -34,7 +34,7 @@ public class SimpleChat extends JavaPlugin
   {
     private static SimpleChat instance;
     private ChannelManager channelManager;
-    private PlayerManager playerManager;
+    private ChatterManager chatterManager;
     private CommandHandler commandExecutor;
     private PlayerListener playerListener;
     private Map<String, Object> worldConfig = Collections
@@ -51,9 +51,9 @@ public class SimpleChat extends JavaPlugin
         return channelManager;
       }
     
-    public PlayerManager getPlayerManager ()
+    public ChatterManager getChatterManager ()
       {
-        return playerManager;
+        return chatterManager;
       }
     
     public Map<String, Object> getWorldConfig ()
@@ -95,7 +95,7 @@ public class SimpleChat extends JavaPlugin
     
     public void refreshCache ()
       {
-        for (Chatter c : playerManager.getChatters())
+        for (Chatter c : chatterManager.getChatters())
           {
             c.updateCache();
           }
@@ -118,7 +118,7 @@ public class SimpleChat extends JavaPlugin
         
         // Create managers
         channelManager = new ChannelManager();
-        playerManager = new PlayerManager();
+        chatterManager = new ChatterManager();
         commandExecutor = new CommandHandler();
         playerListener = new PlayerListener();
         
@@ -142,6 +142,8 @@ public class SimpleChat extends JavaPlugin
         // Commands
         this.getCommand("simplechat").setExecutor(commandExecutor);
         this.getCommand("channel").setExecutor(commandExecutor);
+        this.getCommand("ignore").setExecutor(commandExecutor);
+        this.getCommand("unignore").setExecutor(commandExecutor);
         this.getCommand("mute").setExecutor(commandExecutor);
         this.getCommand("unmute").setExecutor(commandExecutor);
         
@@ -156,7 +158,7 @@ public class SimpleChat extends JavaPlugin
         Player[] onlinePlayers = this.getServer().getOnlinePlayers();
         for (int i = 0; i < onlinePlayers.length; i++)
           {
-            playerManager.initializePlayer(onlinePlayers[i]);
+            chatterManager.initializeChatter(onlinePlayers[i]);
           }
         
         this.getLogger().info("Is now enabled");

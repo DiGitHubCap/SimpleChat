@@ -83,7 +83,7 @@ public class CommandHandler implements CommandExecutor
             if (args.length == 0)
               return false;
             
-            PlayerManager playerManager = plugin.getPlayerManager();
+            ChatterManager playerManager = plugin.getChatterManager();
             ChannelManager channelManager = plugin.getChannelManager();
             
             if (args.length == 1)
@@ -99,6 +99,14 @@ public class CommandHandler implements CommandExecutor
                         return true;
                       }
                     
+                    boolean isChatter = sender instanceof Player;
+                    Chatter chatter = null;
+                    if (isChatter)
+                      {
+                        chatter = playerManager.getChatter((Player) sender);
+                      }
+                    boolean showHidden =
+                        sender.hasPermission("simplechat.channel.list.hidden");
                     sender.sendMessage(ChatColor.GRAY + "("
                         + ChatColor.DARK_PURPLE + "Normal" + ChatColor.GRAY
                         + ", " + ChatColor.LIGHT_PURPLE + "Joined"
@@ -108,14 +116,12 @@ public class CommandHandler implements CommandExecutor
                         + "All available channels:");
                     for (Channel ch : channelManager.getChannels())
                       {
-                        if ( ! (sender instanceof Player))
+                        if ( !isChatter)
                           {
                             sender.sendMessage(ChatColor.DARK_PURPLE
                                 + ch.getName());
                             continue;
                           }
-                        Chatter chatter =
-                            playerManager.getChatter((Player) sender);
                         if (chatter.isInChannel(ch))
                           {
                             if (chatter.getActiveChannel() == ch)
@@ -131,8 +137,11 @@ public class CommandHandler implements CommandExecutor
                           }
                         else
                           {
-                            sender.sendMessage(ChatColor.DARK_PURPLE
-                                + ch.getName());
+                            if ( !ch.isHidden() || showHidden)
+                              {
+                                sender.sendMessage(ChatColor.DARK_PURPLE
+                                    + ch.getName());
+                              }
                           }
                       }
                     return true;
@@ -170,9 +179,8 @@ public class CommandHandler implements CommandExecutor
                       }
                     else
                       {
-                        sender
-                            .sendMessage(ChatColor.RED
-                                + "You do not have permission to join this channel");
+                        sender.sendMessage(ChatColor.RED
+                            + "You don't have permission to join this channel");
                       }
                     return true;
                   }
@@ -213,9 +221,8 @@ public class CommandHandler implements CommandExecutor
                       }
                     else
                       {
-                        chatter
-                            .sendMessage(ChatColor.GREEN
-                                + "You do not have permission to join this channel");
+                        chatter.sendMessage(ChatColor.RED
+                            + "You don't have permission to join this channel");
                       }
                     
                     return true;
@@ -281,57 +288,148 @@ public class CommandHandler implements CommandExecutor
               }
             return false;
           }
+        if (cmd.getName().equals("ignore"))
+          {
+            if ( ! (sender instanceof Player))
+              {
+                sender.sendMessage("This command can only be run by a player");
+                return true;
+              }
+            if ( !sender.hasPermission(cmd.getPermission()))
+              {
+                sender.sendMessage(cmd.getPermissionMessage());
+                return true;
+              }
+            if (args.length == 0)
+              return false;
+            Chatter chatter =
+                plugin.getChatterManager().getChatter((Player) sender);
+            for (String s : args)
+              {
+                Player player = plugin.getServer().getPlayer(s);
+                if (player == null || !player.isOnline())
+                  {
+                    sender.sendMessage(ChatColor.RED + "Player '" + s
+                        + "' is not online");
+                    continue;
+                  }
+                String playerName = player.getName();
+                if (player.hasPermission("simplechat.unignorable"))
+                  {
+                    sender.sendMessage(ChatColor.RED + "Player "
+                        + ChatColor.DARK_RED + playerName + ChatColor.RED
+                        + " cannot be ignored");
+                    continue;
+                  }
+                if (chatter.isIgnoring(playerName))
+                  {
+                    chatter.unignore(playerName);
+                    sender.sendMessage(ChatColor.GREEN
+                        + "You are no longer ignoring " + ChatColor.DARK_GREEN
+                        + playerName);
+                    continue;
+                  }
+                else
+                  {
+                    chatter.ignore(playerName);
+                    sender.sendMessage(ChatColor.GREEN
+                        + "You are now ignoring " + ChatColor.DARK_GREEN
+                        + playerName);
+                    continue;
+                  }
+              }
+            return true;
+          }
+        if (cmd.getName().equals("unignore"))
+          {
+            if ( ! (sender instanceof Player))
+              {
+                sender.sendMessage("This command can only be run by a player");
+                return true;
+              }
+            if ( !sender.hasPermission(cmd.getPermission()))
+              {
+                sender.sendMessage(cmd.getPermissionMessage());
+                return true;
+              }
+            if (args.length == 0)
+              return false;
+            Chatter chatter =
+                plugin.getChatterManager().getChatter((Player) sender);
+            for (String s : args)
+              {
+                Player player = plugin.getServer().getPlayer(s);
+                if (player == null || !player.isOnline())
+                  {
+                    sender.sendMessage(ChatColor.RED + "Player '" + s
+                        + "' is not online");
+                    continue;
+                  }
+                String playerName = player.getName();
+                if (chatter.isIgnoring(playerName))
+                  {
+                    chatter.unignore(playerName);
+                    sender.sendMessage(ChatColor.GREEN
+                        + "You are no longer ignoring " + ChatColor.DARK_GREEN
+                        + playerName);
+                    continue;
+                  }
+                else
+                  {
+                    sender.sendMessage(ChatColor.RED + "You aren't ignoring "
+                        + ChatColor.DARK_RED + playerName);
+                    continue;
+                  }
+              }
+            return true;
+          }
         if (cmd.getName().equals("mute"))
           {
             if (args.length == 0)
               return false;
-            
-            if (args.length == 1)
+            if ( !sender.hasPermission(cmd.getPermission()))
               {
-                if ( !sender.hasPermission(cmd.getPermission()))
-                  {
-                    sender.sendMessage(cmd.getPermissionMessage());
-                    return true;
-                  }
-                Player player = plugin.getServer().getPlayer(args[0]);
-                if (player == null)
-                  {
-                    sender.sendMessage(ChatColor.RED
-                        + "That player is not online");
-                    return true;
-                  }
-                plugin.getPlayerManager().getChatter(player).setMuted(true);
-                sender.sendMessage(ChatColor.BLUE + player.getName()
-                    + ChatColor.AQUA + " has been muted");
+                sender.sendMessage(cmd.getPermissionMessage());
                 return true;
               }
-            return false;
+            for (String s : args)
+              {
+                Player player = plugin.getServer().getPlayer(s);
+                if (player == null || !player.isOnline())
+                  {
+                    sender.sendMessage(ChatColor.RED + "Player '" + s
+                        + "' is not online");
+                    continue;
+                  }
+                plugin.getChatterManager().getChatter(player).setMuted(true);
+                sender.sendMessage(ChatColor.BLUE + player.getName()
+                    + ChatColor.AQUA + " has been muted");
+              }
+            return true;
           }
         if (cmd.getName().equals("unmute"))
           {
             if (args.length == 0)
               return false;
-            
-            if (args.length == 1)
+            if ( !sender.hasPermission(cmd.getPermission()))
               {
-                if ( !sender.hasPermission(cmd.getPermission()))
-                  {
-                    sender.sendMessage(cmd.getPermissionMessage());
-                    return true;
-                  }
-                Player player = plugin.getServer().getPlayer(args[0]);
-                if (player == null)
-                  {
-                    sender.sendMessage(ChatColor.RED
-                        + "That player is not online");
-                    return true;
-                  }
-                plugin.getPlayerManager().getChatter(player).setMuted(false);
-                sender.sendMessage(ChatColor.BLUE + player.getName()
-                    + ChatColor.AQUA + " has been unmuted");
+                sender.sendMessage(cmd.getPermissionMessage());
                 return true;
               }
-            return false;
+            for (String s : args)
+              {
+                Player player = plugin.getServer().getPlayer(s);
+                if (player == null || !player.isOnline())
+                  {
+                    sender.sendMessage(ChatColor.RED + "Player '" + s
+                        + "' is not online");
+                    continue;
+                  }
+                plugin.getChatterManager().getChatter(player).setMuted(false);
+                sender.sendMessage(ChatColor.BLUE + player.getName()
+                    + ChatColor.AQUA + " has been unmuted");
+              }
+            return true;
           }
         return false;
       }
