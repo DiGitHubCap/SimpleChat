@@ -327,7 +327,6 @@ public class CommandHandler implements CommandExecutor
                     sender.sendMessage(ChatColor.GREEN
                         + "You are no longer ignoring " + ChatColor.DARK_GREEN
                         + playerName);
-                    continue;
                   }
                 else
                   {
@@ -335,7 +334,6 @@ public class CommandHandler implements CommandExecutor
                     sender.sendMessage(ChatColor.GREEN
                         + "You are now ignoring " + ChatColor.DARK_GREEN
                         + playerName);
-                    continue;
                   }
               }
             return true;
@@ -372,13 +370,11 @@ public class CommandHandler implements CommandExecutor
                     sender.sendMessage(ChatColor.GREEN
                         + "You are no longer ignoring " + ChatColor.DARK_GREEN
                         + playerName);
-                    continue;
                   }
                 else
                   {
                     sender.sendMessage(ChatColor.RED + "You aren't ignoring "
                         + ChatColor.DARK_RED + playerName);
-                    continue;
                   }
               }
             return true;
@@ -395,15 +391,26 @@ public class CommandHandler implements CommandExecutor
             for (String s : args)
               {
                 Player player = plugin.getServer().getPlayer(s);
+                String playerName = player.getName();
                 if (player == null || !player.isOnline())
                   {
                     sender.sendMessage(ChatColor.RED + "Player '" + s
                         + "' is not online");
                     continue;
                   }
-                plugin.getChatterManager().getChatter(player).setMuted(true);
-                sender.sendMessage(ChatColor.BLUE + player.getName()
-                    + ChatColor.AQUA + " has been muted");
+                Chatter chatter = plugin.getChatterManager().getChatter(player);
+                if (chatter.isMuted())
+                  {
+                    chatter.setMuted(false);
+                    sender.sendMessage(ChatColor.BLUE + playerName
+                        + ChatColor.AQUA + " has been unmuted");
+                  }
+                else
+                  {
+                    chatter.setMuted(true);
+                    sender.sendMessage(ChatColor.BLUE + playerName
+                        + ChatColor.AQUA + " has been muted");
+                  }
               }
             return true;
           }
@@ -419,15 +426,25 @@ public class CommandHandler implements CommandExecutor
             for (String s : args)
               {
                 Player player = plugin.getServer().getPlayer(s);
+                String playerName = player.getName();
                 if (player == null || !player.isOnline())
                   {
                     sender.sendMessage(ChatColor.RED + "Player '" + s
                         + "' is not online");
                     continue;
                   }
-                plugin.getChatterManager().getChatter(player).setMuted(false);
-                sender.sendMessage(ChatColor.BLUE + player.getName()
-                    + ChatColor.AQUA + " has been unmuted");
+                Chatter chatter = plugin.getChatterManager().getChatter(player);
+                if (chatter.isMuted())
+                  {
+                    chatter.setMuted(false);
+                    sender.sendMessage(ChatColor.BLUE + playerName
+                        + ChatColor.AQUA + " has been unmuted");
+                  }
+                else
+                  {
+                    sender.sendMessage(ChatColor.DARK_RED + playerName
+                        + ChatColor.RED + " is not muted");
+                  }
               }
             return true;
           }
